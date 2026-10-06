@@ -1,9 +1,27 @@
 /** Barbie Pit desk — polls /desk/today and renders Section 2 windows. */
 window.BarbieDesk = (() => {
   const API = window.DESK_API_BASE || "http://127.0.0.1:8081";
+  const feedRing = [];
+  const FEED_MAX = 120;
 
   function el(id) {
     return document.getElementById(id);
+  }
+
+  function pushFeed(line) {
+    feedRing.push(line);
+    while (feedRing.length > FEED_MAX) feedRing.shift();
+  }
+
+  function formatFeedLine(ev) {
+    const ts = new Date().toISOString().slice(11, 19);
+    if (ev.kind === "repair") {
+      return `[${ts}] REPAIR gen·${ev.depth || "?"} ${ev.phase} frame=${ev.frame} ${ev.msg || ""}`;
+    }
+    if (ev.kind === "telemetry") {
+      return `[${ts}] TELEM ${ev.agent || "?"} frame=${ev.frame} ${ev.msg || ev.val || ""}`;
+    }
+    return `[${ts}] ${JSON.stringify(ev)}`;
   }
 
   function renderTraders(traders) {
@@ -45,6 +63,66 @@ window.BarbieDesk = (() => {
       </div>`).join("");
   }
 
+  /** Live virtual screen: telemetry + recursive repair/regenerate learning feed. */
+  function renderVirtualScreen(telemetryFeed, repairGeneration) {
+    const screen = el("virtual-screen");
+    const meta = el("virtual-screen-meta");
+    if (!screen) return;
+
+    if (telemetryFeed && telemetryFeed.length) {
+      feedRing.length = 0;
+      telemetryFeed.forEach((ev) => pushFeed(formatFeedLine(ev)));
+    }
+
+    if (meta) {
+      meta.textContent =
+        `repair_generation=${repairGeneration ?? 0} · feed_lines=${feedRing.length} · learn=recursive_self_repair→regenerate`;
+    }
+
+    screen.innerHTML = feedRing
+      .map((line) => {
+        const repair = line.includes("REPAIR");
+        const telem = line.includes("TELEM");
+        const cls = repair ? "text-amber-300" : telem ? "text-emerald-300/90" : "text-cyan-200/80";
+        return `<div class="font-mono text-[11px] leading-relaxed ${cls}">${line}</div>`;
+      })
+      .join("");
+    screen.scrollTop = screen.scrollHeight;
+  }
+
+  function ingestTickResult(tickJson) {
+    if (!tickJson) return;
+    (tickJson.repair || []).forEach((ev) => pushFeed(formatFeedLine({ ...ev, kind: "repair" })));
+    if (tickJson.telemetry) {
+      Object.entries(tickJson.telemetry).forEach(([agent, msg]) => {
+        pushFeed(formatFeedLine({
+          kind: "telemetry",
+          frame: tickJson.frame,
+          agent,
+          msg,
+          status: tickJson.status,
+        }));
+      });
+    }
+    const meta = el("virtual-screen-meta");
+    if (meta) {
+      meta.textContent =
+        `repair_generation=${tickJson.repair_generation ?? 0} · feed_lines=${feedRing.length} · learn=recursive_self_repair→regenerate`;
+    }
+    const screen = el("virtual-screen");
+    if (screen) {
+      screen.innerHTML = feedRing
+        .map((line) => {
+          const repair = line.includes("REPAIR");
+          const telem = line.includes("TELEM");
+          const cls = repair ? "text-amber-300" : telem ? "text-emerald-300/90" : "text-cyan-200/80";
+          return `<div class="font-mono text-[11px] leading-relaxed ${cls}">${line}</div>`;
+        })
+        .join("");
+      screen.scrollTop = screen.scrollHeight;
+    }
+  }
+
   async function refresh() {
     try {
       const r = await fetch(API + "/desk/today");
@@ -53,7 +131,8 @@ window.BarbieDesk = (() => {
       renderTraders(d.traders || []);
       renderBook(d.book || {}, d.frames || [], d.alerts || [], d.fills || []);
       renderFloor(d.floor || []);
-      el("desk-status").textContent = "LIVE · 25SHA";
+      renderVirtualScreen(d.telemetry_feed || [], d.repair_generation);
+      el("desk-status").textContent = `LIVE · 25SHA · regen ${d.repair_generation ?? 0}`;
       el("desk-status").className = "text-emerald-400 font-mono text-sm";
     } catch {
       el("desk-status").textContent = "OFFLINE · demo";
@@ -61,5 +140,5 @@ window.BarbieDesk = (() => {
     }
   }
 
-  return { refresh, API };
+  return { refresh, ingestTickResult, API };
 })();

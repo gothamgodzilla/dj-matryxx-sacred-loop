@@ -1,5 +1,7 @@
 """Persistence. SQLite fictional ledger (frames, meta, traders). Single worker only."""
+import json
 import sqlite3
+import time
 
 TRADERS = [
     ("0xVESP", "Vesperin Quell", "QUIET SNIPER", 43155, 35289),
@@ -18,7 +20,10 @@ class Store:
             "root TEXT, plate TEXT, bpm INTEGER, gas INTEGER, rhythm TEXT); "
             "CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY, v TEXT); "
             "CREATE TABLE IF NOT EXISTS traders(id TEXT PRIMARY KEY, name TEXT, title TEXT, "
-            "book INTEGER, cash INTEGER);"
+            "book INTEGER, cash INTEGER); "
+            "CREATE TABLE IF NOT EXISTS telemetry_events("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, ts REAL, frame INTEGER, kind TEXT, "
+            "agent TEXT, phase TEXT, payload TEXT);"
         )
         for t in TRADERS:
             db.execute("INSERT OR IGNORE INTO traders VALUES (?,?,?,?,?)", t)
@@ -51,6 +56,38 @@ class Store:
         )
         db.commit()
         db.close()
+
+    def log_telemetry(self, frame: int, events: list[dict]):
+        now = time.time()
+        db = self._db()
+        for ev in events:
+            db.execute(
+                "INSERT INTO telemetry_events VALUES (NULL,?,?,?,?,?,?)",
+                (
+                    now,
+                    frame,
+                    ev.get("kind", "telemetry"),
+                    ev.get("agent", ""),
+                    ev.get("phase", ""),
+                    json.dumps(ev, separators=(",", ":")),
+                ),
+            )
+        db.commit()
+        db.close()
+
+    def recent_telemetry(self, limit: int = 80) -> list[dict]:
+        db = self._db()
+        rows = db.execute(
+            "SELECT payload FROM telemetry_events ORDER BY id DESC LIMIT ?", (limit,)
+        ).fetchall()
+        db.close()
+        out = []
+        for (raw,) in reversed(rows):
+            try:
+                out.append(json.loads(raw))
+            except json.JSONDecodeError:
+                continue
+        return out
 
     def traders(self):
         db = self._db()

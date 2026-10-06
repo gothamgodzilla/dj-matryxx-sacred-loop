@@ -117,6 +117,8 @@ def today():
             if r[1] == "0xCOMMITTED"
         ],
         "alerts": [r[1] for r in rows if r[1] != "0xCOMMITTED"],
+        "telemetry_feed": store().recent_telemetry(80),
+        "repair_generation": store().get_meta("repair_generation", 0),
         "disclaimer": "Fictional vessel ledger — not a brokerage, not a chain, not advice.",
     }
     return JSONResponse(body, headers={"Cache-Control": "public, max-age=5"})
