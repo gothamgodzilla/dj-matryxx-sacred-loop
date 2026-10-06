@@ -149,14 +149,31 @@
         💀
     </div>
 
+    <script src="./assets/audio.js"></script>
     <script>
+        const API_BASE = window.DESK_API_BASE || "http://127.0.0.1:8081";
         let bpm = 138;
         const bpmEl = document.getElementById('bpm');
-        
-        setInterval(() => {
+
+        // Live desk poll (5s): today frames + plate. Falls back to demo drift offline.
+        let frame = 5001;
+        async function deskTick() {
+            try {
+                const r = await fetch(API_BASE + "/desk/tick", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({frame: frame++, bpm: window.DeskBPM.current()})
+                });
+                if (r.ok) {
+                    const j = await r.json();
+                    if (j.bpm) { bpm = j.bpm; bpmEl.textContent = bpm; }
+                    return;
+                }
+            } catch (e) { /* offline: demo drift */ }
             bpm = Math.floor(132 + Math.random() * 12);
             bpmEl.textContent = bpm;
-        }, 3200);
+        }
+        setInterval(deskTick, 5000);
 
         function toggleLoop() {
             const orb = document.querySelector('.orb');
