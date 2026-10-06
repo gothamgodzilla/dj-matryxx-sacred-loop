@@ -55,6 +55,13 @@ Out of scope: real brokerage, real chain, real advice. All ledgers fictional.
   `POST /desk/pause|reset`, `GET /plate/current` (Guinness hash).
 - Frontend reads via poll (5s) → SSE upgrade later. Single worker with SQLite.
 
+## 6. Branding
+- Operator: MATRYXX LLC (Sheridan, Wyoming). Product: Wingman.OS.
+- Components: GANESH, LOGiX, MATRYXX (validation engine), Prince.
+- MATRYXX LLC (company) is distinct from MATRYXX (validation engine).
+- “Coexist LLC” / “Coexist Intelligence” branding replaced with “MATRYXX LLC”.
+- Copyright © 2026 MATRYXX LLC. Branding update only; no legal rename or asset transfer.
+
 ## 5. Self-review
 - No TBD. No contradictions (6 floor + 7 judges = distinct layers).
 - Scope is one product slice; artifact-first, backend second.
