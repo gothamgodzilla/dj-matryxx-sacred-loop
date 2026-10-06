@@ -1,189 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DJ MATRYXX • SACRED LOOP</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BARBIE PIT · LIVE DESK · Wingman.OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap');
-        
-        :root {
-            --gold: #D4AF37;
-        }
-        
         body {
             font-family: 'Space Grotesk', sans-serif;
-            background: linear-gradient(rgba(10,15,28,0.95), rgba(10,15,28,0.98)), 
-                        url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat fixed;
-            color: #D4AF37;
-            overflow: hidden;
+            background: linear-gradient(rgba(12,8,20,0.97), rgba(10,15,28,0.98)),
+                radial-gradient(at 20% 20%, #ff69b420, transparent 50%),
+                radial-gradient(at 80% 80%, #00f5e615, transparent 50%);
+            color: #f5e6ff;
+            min-height: 100vh;
         }
-        
         .holo {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(32px);
-            border: 1px solid rgba(212,175,55,0.3);
-            box-shadow: 0 0 60px rgba(0,245,230,0.3),
-                        0 0 120px rgba(212,175,55,0.2);
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,105,180,0.25);
+            box-shadow: 0 0 40px rgba(0,245,230,0.15), 0 0 80px rgba(212,175,55,0.1);
         }
-        
-        .skull-glow {
-            animation: skullpulse 4s ease-in-out infinite;
+        .btn-frame {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            border: 1px solid rgba(244, 114, 182, 0.4);
+            transition: background 0.15s;
         }
-        
-        @keyframes skullpulse {
-            0%, 100% { text-shadow: 0 0 20px #00F5E6, 0 0 40px #D4AF37; }
-            50% { text-shadow: 0 0 40px #00F5E6, 0 0 80px #D4AF37; }
-        }
-        
-        .visualizer {
-            display: flex;
-            gap: 4px;
-            height: 80px;
-            align-items: flex-end;
-        }
-        
-        .bar {
-            width: 6px;
-            background: linear-gradient(#00F5E6, #D4AF37);
-            animation: pulse 0.8s infinite alternate ease-in-out;
-        }
-        
-        .orb {
-            animation: orbFloat 6s ease-in-out infinite;
-        }
+        .btn-frame:hover { background: rgba(236, 72, 153, 0.2); }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center relative">
-    <div class="absolute inset-0 bg-[radial-gradient(at_center,#00F5E620_0%,transparent_70%)]"></div>
-    
-    <div class="max-w-5xl w-full mx-auto p-8 relative z-10">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-12">
-            <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-2xl flex items-center justify-center skull-glow">
-                    <span class="text-4xl">💀</span>
-                </div>
+<body class="pb-32">
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
+        <header class="flex flex-wrap justify-between items-start gap-4">
+            <div>
+                <p class="text-pink-400 tracking-[0.35em] text-xs font-bold">FOUR TRADERS · ONE PRIZE</p>
+                <h1 class="text-4xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-[#D4AF37] to-cyan-300">
+                    BARBIE PIT · LIVE DESK
+                </h1>
+                <p class="text-white/50 text-sm mt-2 max-w-2xl">
+                    Fictional vessel ledger — not a brokerage, not a chain, not advice.
+                    Operated by <strong class="text-[#D4AF37]">MATRYXX LLC</strong> · Wingman.OS
+                </p>
+            </div>
+            <div class="holo rounded-2xl px-6 py-3 text-right">
+                <div class="text-xs text-pink-300/70">GUINNESS PLATE · 25SHA</div>
+                <div id="book-25sha" class="font-mono text-xs text-cyan-300 mt-1 break-all max-w-xs">—</div>
+                <div id="desk-status" class="mt-2 text-emerald-400 font-mono text-sm">CONNECTING…</div>
+            </div>
+        </header>
+
+        <!-- Leaderboard -->
+        <section>
+            <h2 class="text-xs tracking-widest text-pink-300/80 mb-3">LEADERBOARD</h2>
+            <div id="leaderboard" class="grid md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- YOUR FRAME -->
+        <section class="holo rounded-2xl p-4">
+            <h2 class="text-xs tracking-widest text-[#D4AF37]/80 mb-3">YOUR FRAME</h2>
+            <p class="text-xs text-white/50 mb-3">Pairs, capital, ceilings. Tactics are theirs.</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+                <span class="btn-frame">MYTHOS</span><span class="btn-frame">HELIX</span><span class="btn-frame">FOX</span>
+                <span class="btn-frame">SEAL</span><span class="btn-frame">WARDEN</span><span class="btn-frame">DECOY</span>
+                <span class="btn-frame">QUILL</span><span class="btn-frame">ROOK9</span>
+                <span class="btn-frame">1× wall</span><span class="btn-frame">1 sec = 1 hour</span>
+                <span class="btn-frame">+5,000 capital</span><span class="btn-frame">Skew 40%</span>
+                <span class="btn-frame">DD 12%</span>
+                <button type="button" class="btn-frame text-amber-300 border-amber-400/50" id="btn-pause">Pause desk</button>
+                <button type="button" class="btn-frame" id="btn-reset">Reset frame</button>
+            </div>
+            <div class="mt-4 flex items-end gap-4">
                 <div>
-                    <h1 class="text-6xl font-black tracking-[6px] text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-[#D4AF37] to-purple-300">DJ MATRYXX</h1>
-                    <p class="text-cyan-400 tracking-[4px] text-xl">SACRED LOOP PROTOCOL</p>
+                    <div class="text-5xl font-black text-[#D4AF37] tabular-nums" id="bpm">138</div>
+                    <div class="text-xs text-cyan-400">BPM · sacred loop</div>
                 </div>
+                <button type="button" id="btn-mic" class="btn-frame text-cyan-300">Enable mic BPM</button>
             </div>
-            <div class="holo px-8 py-4 rounded-3xl text-sm flex items-center gap-3 border border-[#D4AF37]/40">
-                <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
-                <span class="text-emerald-400 font-mono">LIVE • 25SHA ETERNAL</span>
-            </div>
-        </div>
+        </section>
 
-        <div class="grid grid-cols-12 gap-8">
-            <!-- Audio Player + Visualizer -->
-            <div class="col-span-12 lg:col-span-8 holo rounded-3xl p-10">
-                <div class="flex items-center gap-6">
-                    <div class="w-24 h-24 bg-gradient-to-br from-purple-600 to-cyan-500 rounded-2xl flex items-center justify-center text-6xl orb">🎧</div>
-                    <div class="flex-1">
-                        <div class="text-3xl font-bold">SACRED GEOMETRY MIX</div>
-                        <div class="text-cyan-400">DJ MATRYXX • TULUM SKULL ISLAND LIVE</div>
-                        <div class="visualizer mt-6">
-                            <div class="bar h-[30%]"></div>
-                            <div class="bar h-[60%] animation-delay-150"></div>
-                            <div class="bar h-[90%] animation-delay-300"></div>
-                            <div class="bar h-[45%] animation-delay-500"></div>
-                            <div class="bar h-[75%] animation-delay-700"></div>
-                            <div class="bar h-[55%] animation-delay-200"></div>
-                            <div class="bar h-[85%] animation-delay-400"></div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-7xl font-black text-[#D4AF37] tabular-nums" id="bpm">138</div>
-                        <div class="text-xs tracking-widest text-cyan-400 -mt-2">BPM • SACRED LOOP</div>
-                    </div>
+        <div class="grid lg:grid-cols-2 gap-6">
+            <!-- WINDOW 1 · BOOK -->
+            <section class="holo rounded-2xl p-5">
+                <h2 class="text-xs tracking-widest text-pink-300/80 mb-4">WINDOW 1 · BOOK</h2>
+                <div class="text-4xl font-black text-[#D4AF37] tabular-nums" id="book-equity">—</div>
+                <div class="text-sm text-cyan-400 mt-1">Leading · <span id="book-leading">—</span></div>
+                <div class="text-xs text-white/60 mt-3 font-mono" id="book-meta">Awaiting tick…</div>
+                <div class="mt-6 grid grid-cols-2 gap-4 text-sm">
+                    <div><span class="text-white/40">Alerts</span><ul id="book-alerts" class="mt-2 space-y-1 list-disc list-inside"></ul></div>
+                    <div><span class="text-white/40">Fills</span><ul id="book-fills" class="mt-2 space-y-1 list-none"></ul></div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Sacred Cache Stats -->
-            <div class="col-span-12 lg:col-span-4 holo rounded-3xl p-8 flex flex-col">
-                <div class="text-sm text-[#D4AF37]/70 mb-4">25SHA SACRED CACHE</div>
-                <div class="flex-1 flex items-center justify-center text-center">
-                    <div>
-                        <div class="text-8xl font-black text-emerald-400 tabular-nums">142k</div>
-                        <div class="text-emerald-400 text-sm tracking-widest">TOKENS RECYCLED • 100% EFFICIENCY</div>
-                        <div class="mt-8 text-xs text-cyan-400">CACHE HITS: 98.7% • RESONANCE: 0.94</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sacred Geometry Topology -->
-            <div class="col-span-12 holo rounded-3xl p-10">
-                <div class="text-sm text-[#D4AF37]/70 mb-6">SACRED GEOMETRIC TOPOLOGY • LIVE AGENT CYCLE</div>
-                <div class="flex justify-center gap-12 text-center">
-                    <div class="space-y-2">
-                        <div class="w-20 h-20 mx-auto rounded-full border-4 border-cyan-400 flex items-center justify-center text-2xl">📊</div>
-                        <div class="text-xs text-cyan-400">ORDER BOOK</div>
-                    </div>
-                    <div class="text-6xl text-purple-400 self-center">⟲</div>
-                    <div class="space-y-2">
-                        <div class="w-20 h-20 mx-auto rounded-full border-4 border-purple-400 flex items-center justify-center text-2xl">❤️</div>
-                        <div class="text-xs text-purple-400">SENTIMENT</div>
-                    </div>
-                    <div class="text-6xl text-cyan-400 self-center">⟲</div>
-                    <div class="space-y-2">
-                        <div class="w-20 h-20 mx-auto rounded-full border-4 border-teal-400 flex items-center justify-center text-2xl">🛡️</div>
-                        <div class="text-xs text-teal-400">RISK EXECUTION</div>
-                    </div>
-                </div>
-            </div>
+            <!-- WINDOW 2 · FLOOR -->
+            <section class="holo rounded-2xl p-5">
+                <h2 class="text-xs tracking-widest text-cyan-300/80 mb-4">WINDOW 2 · FLOOR · Who is deciding right now</h2>
+                <div id="floor-feed" class="space-y-3 max-h-80 overflow-y-auto"></div>
+            </section>
         </div>
     </div>
 
-    <!-- Company footer: MATRYXX LLC -->
-    <footer class="relative z-10 text-center pb-24 pt-4 px-8">
-        <div class="text-xs tracking-widest text-[#D4AF37]/70">Operated by MATRYXX LLC · Sheridan, Wyoming</div>
-        <div class="text-xs text-cyan-400/70 mt-1">Wingman.OS (product) · Components: GANESH · LOGiX · MATRYXX (validation engine) · Prince — MATRYXX LLC (company) is distinct from MATRYXX (validation engine).</div>
-        <div class="text-xs text-[#D4AF37]/50 mt-1">© 2026 MATRYXX LLC. Fictional vessel ledger — not a brokerage, not a chain, not advice. Software branding update only; no legal entity rename or asset transfer.</div>
+    <footer class="fixed bottom-0 inset-x-0 bg-black/60 backdrop-blur border-t border-pink-500/20 py-3 px-6 text-center text-xs text-white/50">
+        © 2026 MATRYXX LLC · Sheridan, Wyoming · GANESH · LOGiX · MATRYXX (engine) · Prince
     </footer>
 
-    <!-- Floating DJ Matryxx Orb -->
-    <div onclick="toggleLoop()" class="fixed bottom-8 right-8 w-20 h-20 bg-gradient-to-br from-cyan-400 via-purple-600 to-gold-500 rounded-3xl flex items-center justify-center text-4xl shadow-2xl cursor-pointer hover:scale-110 active:scale-95 transition-all border border-white/30 z-50 orb">
-        💀
-    </div>
-
     <script src="./assets/audio.js"></script>
+    <script src="./assets/desk.js"></script>
     <script>
         const API_BASE = window.DESK_API_BASE || "http://127.0.0.1:8081";
-        let bpm = 138;
-        const bpmEl = document.getElementById('bpm');
-
-        // Live desk poll (5s): today frames + plate. Falls back to demo drift offline.
         let frame = 5001;
-        async function deskTick() {
+        let paused = false;
+
+        async function tick() {
+            if (paused) return;
             try {
-                const r = await fetch(API_BASE + "/desk/tick", {
+                await fetch(API_BASE + "/desk/tick", {
                     method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({frame: frame++, bpm: window.DeskBPM.current()})
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ frame: frame++, bpm: window.DeskBPM.current() })
                 });
-                if (r.ok) {
-                    const j = await r.json();
-                    if (j.bpm) { bpm = j.bpm; bpmEl.textContent = bpm; }
-                    return;
-                }
-            } catch (e) { /* offline: demo drift */ }
-            bpm = Math.floor(132 + Math.random() * 12);
-            bpmEl.textContent = bpm;
-        }
-        setInterval(deskTick, 5000);
-
-        function toggleLoop() {
-            const orb = document.querySelector('.orb');
-            orb.style.transform = 'scale(0.6)';
-            setTimeout(() => orb.style.transform = 'scale(1)', 200);
-            console.log('%cSACRED LOOP RESONANCE ACHIEVED', 'color:#D4AF37; font-size:18px; font-weight:bold');
+            } catch (_) { /* offline */ }
+            await window.BarbieDesk.refresh();
         }
 
-        // Tailwind script already included via CDN
-        console.log('%cDJ MATRYXX SACRED LOOP ONLINE • Wingman.OS Connected', 'color:#D4AF37; font-family:monospace');
+        document.getElementById("btn-pause").onclick = () => {
+            paused = !paused;
+            document.getElementById("btn-pause").textContent = paused ? "Resume desk" : "Pause desk";
+        };
+        document.getElementById("btn-reset").onclick = () => { frame = 5001; tick(); };
+        document.getElementById("btn-mic").onclick = async () => {
+            try {
+                await window.DeskBPM.fromMic((bpm) => {
+                    document.getElementById("bpm").textContent = bpm;
+                });
+                document.getElementById("btn-mic").textContent = "Mic live";
+            } catch (e) {
+                alert("Mic permission required for live BPM");
+            }
+        };
+
+        tick();
+        setInterval(tick, 5000);
     </script>
 </body>
 </html>

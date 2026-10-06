@@ -4,7 +4,9 @@ import sys
 import urllib.error
 import urllib.request
 
-BASE = "http://127.0.0.1:8080"
+import os
+
+BASE = os.getenv("DESK_API_BASE", "http://127.0.0.1:8080")
 
 
 def call(method, path, body=None):
